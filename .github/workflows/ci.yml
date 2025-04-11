@@ -13,7 +13,7 @@ on:
 env:
   IMAGE_NAME: harmonidcaputo/open-balena-remote
   BASE_VERSION: '0.1.0' # Where action-vtl starts if there are no existing tags
-  NODE_VERSION: 20 # Match the Dockerfile version
+  NODE_VERSION: 22 # Match the Dockerfile version
 
 jobs:
   # Sanity checks: Lint, test, and build the project
