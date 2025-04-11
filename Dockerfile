@@ -1,4 +1,4 @@
-FROM debian:bullseye as build
+FROM debian:bookworm-slim as build
 
 # Build ttyd from source
 RUN apt-get update && apt-get install -y build-essential cmake git libjson-c-dev libwebsockets-dev && \
@@ -67,11 +67,12 @@ COPY --from=build /usr/local/bin/ttyd /usr/local/bin
 COPY --from=build /usr/local/share/man/man1/ttyd.1 /usr/local/share/man/man1
 
 COPY open-balena-remote.js ./
+COPY logger.js ./
 COPY package.json ./
 COPY html ./html
 COPY views ./views
 
-RUN npm install --silent
+RUN npm ci --silent
 
 COPY scripts ./scripts
 
