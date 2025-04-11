@@ -9,13 +9,9 @@ RUN apt-get update && apt-get install -y build-essential cmake git libjson-c-dev
   make && \
   make install
 
-FROM debian:bullseye
+FROM node:22-bookworm-slim
 
 ARG DEBIAN_FRONTEND=noninteractive
-
-# Update nodejs version to 17.x
-RUN apt-get update && apt-get install -y curl && \
-  curl -sL https://deb.nodesource.com/setup_17.x | bash -
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
@@ -23,7 +19,6 @@ RUN apt-get update && apt-get install -y \
   unzip \
   git \
   netbase \
-  nodejs \
   libjson-c-dev \
   libwebsockets-dev \
   net-tools \
@@ -69,6 +64,7 @@ COPY --from=build /usr/local/share/man/man1/ttyd.1 /usr/local/share/man/man1
 COPY open-balena-remote.js ./
 COPY logger.js ./
 COPY package.json ./
+COPY package-lock.json ./
 COPY html ./html
 COPY views ./views
 
