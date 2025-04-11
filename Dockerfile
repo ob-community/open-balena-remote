@@ -1,4 +1,4 @@
-FROM debian:bookworm-slim as build
+FROM debian:bookworm-slim AS build
 
 # Build ttyd from source
 RUN apt-get update && apt-get install -y build-essential cmake git libjson-c-dev libwebsockets-dev && \
@@ -17,6 +17,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y \
   nano \
   unzip \
+  curl \
   git \
   netbase \
   libjson-c-dev \
@@ -32,7 +33,7 @@ RUN apt-get update && apt-get install -y \
   rm -rf /var/lib/apt/lists/*
 
 # Install balena-cli
-ENV BALENA_CLI_VERSION 15.2.3
+ENV BALENA_CLI_VERSION=15.2.3
 RUN curl -sSL https://github.com/balena-io/balena-cli/releases/download/v$BALENA_CLI_VERSION/balena-cli-v$BALENA_CLI_VERSION-linux-x64-standalone.zip > balena-cli.zip && \
   unzip balena-cli.zip && \
   mv balena-cli/* /usr/bin && \

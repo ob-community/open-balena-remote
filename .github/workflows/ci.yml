@@ -3,9 +3,8 @@ name: CI
 on:
   # Do not build 3rd party package updates automatically to avoid some hacked package stealing secrets https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
   push:
-    branches-ignore:
-      - 'renovate/3rd-party**'
-      - 'dependabot/**'
+    branches:
+      - main
   pull_request:
     branches-ignore:
       - 'renovate/3rd-party**'
