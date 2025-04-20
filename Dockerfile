@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y build-essential cmake git libjson-c-dev
   make && \
   make install
 
-FROM node:22-bookworm-slim
+FROM node:23-bookworm-slim
 
 ARG DEBIAN_FRONTEND=noninteractive
 
