@@ -1,6 +1,6 @@
 {
   "name": "open-balena-remote",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Open Balena Remote",
   "author": "David Caputo <dcaput@harmoni.io>",
   "main": "open-balena-remote.js",
