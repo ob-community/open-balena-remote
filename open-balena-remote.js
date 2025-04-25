@@ -4,7 +4,7 @@ const express = require('express');
 const URLSearchParams = require('url').URLSearchParams;
 const cookieParser = require('cookie-parser');
 const { spawn, execSync } = require('child_process');
-const { createProxyMiddleware } = require('http-proxy-middleware');
+const { legacyCreateProxyMiddleware } = require('http-proxy-middleware');
 const portfinder = require('portfinder');
 const schedule = require('node-schedule');
 const session = require('express-session');
@@ -281,15 +281,13 @@ const proxyMiddlewareConfig = {
     logger.debug({ route }, 'Proxying request to server');
     return route;
   },
-  on: {
-    proxyReqWs: (proxyReq, req, _socket, _options, _head) => {
-      if (!req.session.data) {
-        // downgrade to HTTP request to be subsequently killed
-        proxyReq.path = '';
-        proxyReq.removeHeader('Upgrade');
-        proxyReq.setHeader('Connection', 'close');
-      }
-    },
+  onProxyReqWs: (proxyReq, req, _socket, _options, _head) => {
+    if (!req.session.data) {
+      // downgrade to HTTP request to be subsequently killed
+      proxyReq.path = '';
+      proxyReq.removeHeader('Upgrade');
+      proxyReq.setHeader('Connection', 'close');
+    }
   },
 };
 
@@ -423,7 +421,7 @@ async function startProxy(proxyPort, initialHandler) {
   if (initialHandler === true) {
     newApp.use(initialRequestHandler);
   }
-  newApp.use(createProxyMiddleware(proxyMiddlewareConfig));
+  newApp.use(legacyCreateProxyMiddleware(proxyMiddlewareConfig));
   newApp.use(errorResponseHandler);
 
   var newServer = newApp.listen(proxyPort, HOST, () => {
