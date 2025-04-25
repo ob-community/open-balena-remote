@@ -21,7 +21,7 @@
     "memorystore": "^1.6.7",
     "node-schedule": "^2.1.1",
     "pino": "^9.6.0",
-    "portfinder": "^1.0.35",
+    "portfinder": "^1.0.36",
     "pug": "^3.0.3",
     "uuid": "^11.1.0",
     "wait-port": "^1.1.0"
