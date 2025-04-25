@@ -14,6 +14,7 @@ const uuid = require('uuid');
 const waitPort = require('wait-port');
 const crypto = require('crypto');
 const fs = require('fs');
+const logger = require('./logger.js');
 require('dotenv').config();
 
 const DEBUG = false;
