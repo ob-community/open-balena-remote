@@ -281,13 +281,15 @@ const proxyMiddlewareConfig = {
     logger.debug({ route }, 'Proxying request to server');
     return route;
   },
-  onProxyReqWs: (proxyReq, req, _socket, _options, _head) => {
-    if (!req.session.data) {
-      // downgrade to HTTP request to be subsequently killed
-      proxyReq.path = '';
-      proxyReq.removeHeader('Upgrade');
-      proxyReq.setHeader('Connection', 'close');
-    }
+  on: {
+    proxyReqWs: (proxyReq, req, _socket, _options, _head) => {
+      if (!req.session.data) {
+        // downgrade to HTTP request to be subsequently killed
+        proxyReq.path = '';
+        proxyReq.removeHeader('Upgrade');
+        proxyReq.setHeader('Connection', 'close');
+      }
+    },
   },
 };
 
