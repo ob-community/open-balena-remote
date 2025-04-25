@@ -1,4 +1,4 @@
-FROM debian:bullseye as build
+FROM debian:bookworm-slim AS build
 
 # Build ttyd from source
 RUN apt-get update && apt-get install -y build-essential cmake git libjson-c-dev libwebsockets-dev && \
@@ -9,21 +9,17 @@ RUN apt-get update && apt-get install -y build-essential cmake git libjson-c-dev
   make && \
   make install
 
-FROM debian:bullseye
+FROM node:23-bookworm-slim
 
 ARG DEBIAN_FRONTEND=noninteractive
-
-# Update nodejs version to 17.x
-RUN apt-get update && apt-get install -y curl && \
-  curl -sL https://deb.nodesource.com/setup_17.x | bash -
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
   nano \
   unzip \
+  curl \
   git \
   netbase \
-  nodejs \
   libjson-c-dev \
   libwebsockets-dev \
   net-tools \
@@ -37,7 +33,7 @@ RUN apt-get update && apt-get install -y \
   rm -rf /var/lib/apt/lists/*
 
 # Install balena-cli
-ENV BALENA_CLI_VERSION 15.2.3
+ENV BALENA_CLI_VERSION=15.2.3
 RUN curl -sSL https://github.com/balena-io/balena-cli/releases/download/v$BALENA_CLI_VERSION/balena-cli-v$BALENA_CLI_VERSION-linux-x64-standalone.zip > balena-cli.zip && \
   unzip balena-cli.zip && \
   mv balena-cli/* /usr/bin && \
@@ -67,11 +63,13 @@ COPY --from=build /usr/local/bin/ttyd /usr/local/bin
 COPY --from=build /usr/local/share/man/man1/ttyd.1 /usr/local/share/man/man1
 
 COPY open-balena-remote.js ./
+COPY logger.js ./
 COPY package.json ./
+COPY package-lock.json ./
 COPY html ./html
 COPY views ./views
 
-RUN npm install --silent
+RUN npm ci --silent
 
 COPY scripts ./scripts
 
