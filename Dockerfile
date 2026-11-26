@@ -1,21 +1,21 @@
-FROM debian:bullseye as build
+FROM debian:bookworm AS build
 
-# Build ttyd from source
+# Build ttyd from source (pinned)
 RUN apt-get update && apt-get install -y build-essential cmake git libjson-c-dev libwebsockets-dev && \
-  git clone --quiet https://github.com/tsl0922/ttyd.git && \
+  git clone --quiet --depth 1 --branch 1.7.7 https://github.com/tsl0922/ttyd.git && \
   mkdir -p ttyd/build && \
   cd ttyd/build && \
   cmake .. && \
   make && \
   make install
 
-FROM debian:bullseye
+FROM debian:bookworm
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Update nodejs version to 17.x
-RUN apt-get update && apt-get install -y curl && \
-  curl -sL https://deb.nodesource.com/setup_17.x | bash -
+# Node.js 22 LTS
+RUN apt-get update && apt-get install -y curl ca-certificates && \
+  curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
@@ -37,7 +37,7 @@ RUN apt-get update && apt-get install -y \
   rm -rf /var/lib/apt/lists/*
 
 # Install balena-cli
-ENV BALENA_CLI_VERSION 15.2.3
+ENV BALENA_CLI_VERSION=15.2.3
 RUN curl -sSL https://github.com/balena-io/balena-cli/releases/download/v$BALENA_CLI_VERSION/balena-cli-v$BALENA_CLI_VERSION-linux-x64-standalone.zip > balena-cli.zip && \
   unzip balena-cli.zip && \
   mv balena-cli/* /usr/bin && \
@@ -45,13 +45,13 @@ RUN curl -sSL https://github.com/balena-io/balena-cli/releases/download/v$BALENA
 
 # Install websockify
 RUN mkdir -p /usr/share/websockify && \
-  git clone --quiet https://github.com/novnc/websockify.git /usr/share/websockify && \
+  git clone --quiet --depth 1 --branch v0.13.0 https://github.com/novnc/websockify.git /usr/share/websockify && \
   cd /usr/share/websockify && \
   python3 setup.py install
 
 # Install novnc
 RUN mkdir -p /usr/share/novnc_root/novnc && \
-  git clone --quiet https://github.com/novnc/noVNC /usr/share/novnc_root/novnc && \
+  git clone --quiet --depth 1 --branch v1.6.0 https://github.com/novnc/noVNC /usr/share/novnc_root/novnc && \
   cd /usr/share/novnc_root/novnc && \
   npm install --silent && \
   sed -i 's/color:yellow;/color:yellow; display: none; /g' /usr/share/novnc_root/novnc/app/styles/base.css && \
